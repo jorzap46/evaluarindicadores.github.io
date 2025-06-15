@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evaluación de Indicadores</title>
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f9fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      padding: 1rem;
+      background-color: #00B8CB;
+      color: #fff;
+    }
+    .container {
+      padding: 1rem;
+    }
+    .category {
+      margin-bottom: 2rem;
+      background-color: #e6fafd;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 0 8px rgba(0, 184, 203, 0.2);
+    }
+    .indicator {
+      margin: 0.5rem 0;
+    }
+    .indicator label {
+      margin-right: 1rem;
+    }
+    .pagination {
+      text-align: center;
+      margin: 1rem 0;
+    }
+    .pagination button {
+      background-color: #00B8CB;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      margin: 0 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .pagination button:hover {
+      background-color: #0090a0;
+    }
+    /*.chart-container {
+      max-width: 600px;
+      max-height: 100px;
+      margin: 2rem auto;
+      background-color: #ffffff;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }*/
+    .summary {
+      margin: 2rem auto;
+      max-width: 700px;
+      padding: 1rem;
+      background-color: #d6f5f8;
+      border-radius: 10px;
+      color: #333;
+    }
+    .summary h3 {
+      margin-top: 1.5rem;
+    }
+    /*canvas.summary-chart {
+      max-width: 300px;
+      margin-top: 1rem;
+    }*/
+    .show-summary-btn {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .show-summary-btn button {
+      background-color: #007c91;
+      color: white;
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .show-summary-btn button:hover {
+      background-color: #005f6b;
+    }
+    .terminar
+    {
+      background-color: #ffc107;
+     
+    }
+    @media (max-width: 600px) {
+      .chart-container, .summary-chart {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Evaluación de Indicadores Humanizados</h1>
+  </header>
+  <div class="container" id="form-container"></div>
+  <div class="pagination">
+    <button onclick="prevPage()">Anterior</button>
+    <span id="page-indicator"></span>
+    <button onclick="nextPage()">Siguiente</button>
+  </div>
+  <!--<div class="chart-container">
+    <canvas id="chart"></canvas>
+  </div>-->
+  <div class="show-summary-btn">
+    <button onclick="showSummary()"><i class="fas fa-chart-bar"></i> Ver Estadísticas</button>    
+  </div>
+  <div class="show-summary-btn">
+    <button onclick="terminar();"> <i class="fas fa-circle-xmark"></i> Terminar</button>    
+  </div>
+  <div class="summary" id="summary" style="display:none">
+    <h2>Resumen Final</h2>
+    <div id="summary-details"></div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const indicadores = {
+      SENSIBILIDAD: ["Afectividad", "Trato delicado"],
+      SEGURIDAD: ["Expresión de ternura", "Seguridad al cogerle la mano", "enmienda sus errores", "Autonomía"],
+      COMUNICACIÓN: ["Inicio de la interacción con un elogio y tono suave", "Saludo verbal y cordial", "Saludo no verbal y acogedor", "Interactúa presentándose", "Presta atención al contacto visual", "Escucha activa", "Orientación al ingreso al servicio", "Permite que el paciente exprese sus ideas", "Permite la manifestación de emociones del paciente", "El lenguaje es de acuerdo al nivel cultural"],
+      RESPETO: ["Respeta a la persona evitando diminutivos o familiaridades", "Muestra atención y respeto", "Respeto por el espacio personal del paciente.", "Conservar la individualidad", "Ser apoyo en momento que peligra la vida", "Trato equitativo y respetuoso", "Respeta las diferencias culturales del paciente"],
+      EMPATÍA: ["Colocarse en lugar del otro", "Capacidad de comprender sentimientos", "Se muestra solidaria", "Ayuda a la solución de problemas"],
+      PACIENCIA: ["Respeto por los silencios del paciente", "Utiliza el tiempo suficiente para responder a preguntas del paciente", "Atención sin prisa", "Mostrar cercanía"],
+      COMPROMISO: ["Mostrar interés por la problemática", "Motivación al paciente", "Práctica de confidencialidad", "Motivación a la esperanza", "Aboga por las necesidades y los derechos del paciente"],
+      COMPRENSIÓN: ["Mantiene la compostura y utiliza estrategias de apoyo para calmar", "Brinda palabras de aliento y apoyo constante", "Trato como a un ser humano", "Reconocimiento al otro", "Cuidar para la trascendencia"],
+      ACEPTACIÓN: ["Sin distinción de raza", "Aceptación a las manifestaciones de las prácticas religiosas", "Uso del Toque terapéutico", "Acepta la historia personal del paciente", "Evita reacciones punitivas y de rechazo", "Evita juicios y críticas"],
+      ASERTIVIDAD: ["Ser un elemento terapéutico", "Mostrar firmeza en decisiones", "Utiliza un lenguaje firme pero respetuoso", "Evita rodeos, indirectas e insinuaciones", "Evita sarcasmo o lenguaje pasivo-agresivo para comunicar sus puntos de vista"],
+      DIGNIDAD: ["Llamar por su nombre", "Asegura la confiabilidad", "Asegura la privacidad durante las intervenciones", "Respeta la intimidad como persona", "Mantiene la confidencialidad"],
+      ESTÉTICA: ["Coherencia en la comunicación verbal y no verbal", "Armonía entre lo que se dice y hace", "Secuencia y armonía en las acciones"]
+    };
+
+    let page = 0;
+    const categorias = Object.keys(indicadores);
+
+    function saveResponse(category, indicator, value) {
+      let data = JSON.parse(localStorage.getItem('evaluacion') || '{}');
+      if (!data[category]) data[category] = {};
+      data[category][indicator] = value;
+      localStorage.setItem('evaluacion', JSON.stringify(data));
+    }
+
+    function renderPage() {
+      const container = document.getElementById("form-container");
+      const currentCategory = categorias[page];
+      container.innerHTML = `<div class="category"><h2>${currentCategory}</h2>${indicadores[currentCategory]
+        .map(ind => {
+          const name = `${currentCategory}-${ind}`;
+          return `<div class="indicator"><strong>${ind}</strong><br>
+            <label><input type="radio" name="${name}" value="Logrado" onchange="saveResponse('${currentCategory}', '${ind}', this.value)"> Logrado</label>
+            <label><input type="radio" name="${name}" value="En Proceso" onchange="saveResponse('${currentCategory}', '${ind}', this.value)"> En Proceso</label>
+            <label><input type="radio" name="${name}" value="No Logrado" onchange="saveResponse('${currentCategory}', '${ind}', this.value)"> No Logrado</label>
+          </div>`;
+        }).join("")}</div>`;
+      document.getElementById("page-indicator").textContent = `Página ${page + 1} de ${categorias.length}`;
+      renderChart(currentCategory);
+    }
+
+    function nextPage() {
+      const currentCategory = categorias[page];
+      const inputs = document.querySelectorAll(`.category input[type="radio"]`);
+      const grouped = {};
+      inputs.forEach(input => {
+        if (!grouped[input.name]) grouped[input.name] = [];
+        grouped[input.name].push(input);
+      });
+      const allResponded = Object.values(grouped).every(group => group.some(input => input.checked));
+      if (!allResponded) {
+        alert("Por favor, responde todas las preguntas antes de continuar.");
+        return;
+      }
+      if (page < categorias.length - 1) {
+        page++;
+        renderPage();
+      }
+    }
+
+    function prevPage() {
+      if (page > 0) {
+        page--;
+        renderPage();
+      }
+    }
+
+    function renderChart(category) {
+      const ctx = document.getElementById("chart").getContext("2d");
+      const data = JSON.parse(localStorage.getItem("evaluacion") || '{}');
+      const respuestas = data[category] || {};
+      const counts = {"Logrado": 0, "En Proceso": 0, "No Logrado": 0};
+      for (let key in respuestas) {
+        if (counts[respuestas[key]]) counts[respuestas[key]]++;
+      }
+      if (window.chartInstance) window.chartInstance.destroy();
+      window.chartInstance = new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: ["Logrado", "En Proceso", "No Logrado"],
+          datasets: [{
+            data: [counts["Logrado"], counts["En Proceso"], counts["No Logrado"]],
+            backgroundColor: ["#4caf50", "#ff9800", "#f44336"]
+          }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              labels: { color: "#333" }
+            }
+          }
+        }
+      });
+    }
+
+    function showSummary() {
+      for (let i = 0; i < categorias.length; i++) {
+        const cat = categorias[i];
+        const expected = indicadores[cat].length;
+        const data = JSON.parse(localStorage.getItem("evaluacion") || '{}');
+        const respuestas = data[cat] || {};
+        if (Object.keys(respuestas).length < expected) {
+          alert(`Por favor, completa todas las preguntas de la categoría "${cat}" antes de ver el resumen.`);
+          return;
+        }
+      }
+      const data = JSON.parse(localStorage.getItem("evaluacion") || '{}');
+      const summaryContainer = document.getElementById("summary");
+      const summaryDetails = document.getElementById("summary-details");
+      summaryDetails.innerHTML = '';
+      let totalPuntos = 0;
+       //variables
+      let ptlg=0;
+      let ptep=0;
+      let ptnl=0;
+      Object.keys(indicadores).forEach(cat => {
+        const respuestas = data[cat] || {};
+        for (let ind of indicadores[cat]) 
+        {
+          const val = respuestas[ind];
+
+          if (val === "Logrado")
+          {
+            totalPuntos += 3;
+            ptlg+=3;
+          } 
+          else if (val === "En Proceso")
+          {
+            totalPuntos += 2;
+            ptep+=2;
+          } 
+          else if (val === "No Logrado")
+          {
+            totalPuntos += 1;
+            ptnl+=1;
+          } 
+        }
+      });
+      let resultadoTexto = "";
+      if (totalPuntos >= 60 && totalPuntos <= 100) resultadoTexto = "NO HA INICIADO AÚN UNA RELACIÓN DE AYUDA";
+      else if (totalPuntos >= 101 && totalPuntos <= 140) resultadoTexto = "RELACIÓN DE AYUDA EN PROCESO";
+      else if (totalPuntos >= 141 && totalPuntos <= 180) resultadoTexto = "RELACIÓN DE AYUDA ESTABLECIDA";
+
+      summaryDetails.innerHTML = `
+        <h3>Puntaje Total: ${totalPuntos}</h3>
+        <p><strong>Resultado:</strong> ${resultadoTexto}</p>
+        <p><strong>Logrado:</strong> ${ptlg}</p>
+        <p><strong>En Proceso:</strong> ${ptep}</p>
+        <p><strong>No Logrado:</strong> ${ptnl}</p>
+        <canvas id="resultadoChart" class="summary-chart"></canvas>
+      `;
+
+      setTimeout(() => {
+        const ctx = document.getElementById("resultadoChart").getContext("2d");
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["No Iniciado", "En Proceso", "Establecida"],
+            datasets: [{
+              label: 'Puntaje Total',
+              data: [
+                totalPuntos >= 60 && totalPuntos <= 100 ? totalPuntos : ptnl,
+                totalPuntos >= 101 && totalPuntos <= 140 ? totalPuntos : ptep,
+                totalPuntos >= 141 ? totalPuntos : ptlg
+              ],
+              backgroundColor: [
+                totalPuntos <= 100 ? '#f44336' : '#ccc',
+                totalPuntos > 100 && totalPuntos <= 140 ? '#ff9800' : '#ccc',
+                totalPuntos > 140 ? '#4caf50' : '#ccc'
+              ]
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 180,
+                ticks: { color: "#333" }
+              },
+              x: {
+                ticks: { color: "#333" }
+              }
+            },
+            plugins: {
+              legend: {
+                labels: { color: "#333" }
+              }
+            }
+          }
+        });
+      }, 100);
+      summaryContainer.style.display = 'block';
+    }
+    
+    function terminar()
+    {
+      window.location='inicio.html';
+    }
+    renderPage();
+  </script>
+</body>
+</html>

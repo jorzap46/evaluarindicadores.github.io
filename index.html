@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imagen con Texto Escrito</title>
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!--<style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f8f9;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      padding: 1rem;
+      background-color: #00B8CB;
+      color: #fff;
+    }
+    .contenedor {
+      max-width: 800px;
+      margin: auto;
+      padding: 2rem 1rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .imagen-wrapper {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
+    }
+
+    .imagen-responsive,
+    .descripcion {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      max-width: 100%;
+    }
+
+    .imagen-responsive {
+      transition: opacity 2.5s ease;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .descripcion {
+      color: #333;
+      font-size: 1.1rem;
+      background-color: #ffffff;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: none;
+      z-index: 2;
+      white-space: pre-wrap;
+      text-align: left;
+    }
+
+    .botones {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .boton {
+      background-color: #00B8CB;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0 4px 8px rgba(0, 184, 203, 0.3);
+    }
+
+    .boton:hover {
+      background-color: #0098a9;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 600px) {
+      .imagen-responsive,
+      .descripcion {
+        width: 90%;
+      }
+
+      .botones {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .boton {
+        width: 90%;
+      }
+    }
+  </style>-->
+</head>
+<body>
+  <header>
+        <h1>Evaluación de Indicadores Humanizados</h1>
+     </header>
+  <div class="contenedor">
+    <div class="imagen-wrapper">
+      <img id="imagen" src="imagenes/logo.png" alt="Enfermera y paciente" class="imagen-responsive">
+      <div class="descripcion" id="descripcion"></div>
+    </div>
+
+    <div class="botones">
+      <button class="boton" onclick="mostrarDescripcion()"><i class="fas fa-info-circle"></i> Acerca de</button>
+      <button class="boton" onclick="irEvaluacion();"><i class="fas fa-user-check"></i> Evaluar a alguien</button>
+      <button class="boton" onclick="irAutoEvaluacion();"><i class="fas fa-user"></i> Autoevaluación</button>
+    </div>
+  </div>
+
+  <script>
+    function escribirTexto(elemento, texto, velocidad, callback) {
+      let i = 0;
+      elemento.textContent = '';
+      const intervalo = setInterval(() => {
+        elemento.textContent += texto.charAt(i);
+        i++;
+        if (i === texto.length) {
+          clearInterval(intervalo);
+          if (callback) callback();
+        }
+      }, velocidad);
+    }
+
+    function mostrarDescripcion() {
+      const imagen = document.getElementById('imagen');
+      const descripcion = document.getElementById('descripcion');
+      const texto =
+        "Este software permite evaluar habilidades blandas como empatía, respeto y comunicación. Facilita la autoevaluación y la evaluación a terceros mediante gráficos y análisis automatizados.Este software permite evaluar habilidades blandas como empatía, respeto y comunicación. Facilita la autoevaluación y la evaluación a terceros mediante gráficos y análisis automatizados.";
+
+      // Oculta la imagen lentamente
+      imagen.style.opacity = '0';
+
+      // Mostrar el div contenedor del texto después de un breve delay
+      setTimeout(() => {
+        descripcion.style.display = 'block';
+        escribirTexto(descripcion, texto, 30);
+      }, 2500); // esperar a que se desvanezca
+
+      // Luego de 30 segundos, revertir el cambio
+      setTimeout(() => {
+        descripcion.style.display = 'none';
+        imagen.style.opacity = '1';
+      }, 32500); // 30s + 2.5s
+    }
+    function irAutoEvaluacion()
+    {
+      window.location='autoevaluacion.html';
+    }
+    function irEvaluacion()
+    {
+      window.location='evaluacion.html';
+    }
+  </script>
+</body>
+</html>
