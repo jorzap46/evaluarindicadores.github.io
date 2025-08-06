@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Imagen con Texto Escrito</title>
-  <!-- Font Awesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!--<style>
+  <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f8f9;
@@ -66,6 +64,7 @@
       z-index: 2;
       white-space: pre-wrap;
       text-align: left;
+      text-align: justify;
     }
 
     .botones {
@@ -108,7 +107,7 @@
         width: 90%;
       }
     }
-  </style>-->
+  </style>
 </head>
 <body>
   <header>
@@ -121,9 +120,9 @@
     </div>
 
     <div class="botones">
-      <button class="boton" onclick="mostrarDescripcion()"><i class="fas fa-info-circle"></i> Acerca de</button>
-      <button class="boton" onclick="irEvaluacion();"><i class="fas fa-user-check"></i> Evaluar a alguien</button>
-      <button class="boton" onclick="irAutoEvaluacion();"><i class="fas fa-user"></i> Autoevaluación</button>
+      <button class="boton" onclick="mostrarDescripcion()">Acerca de</button>
+      <button class="boton" onclick="evaluar();">Evaluar a alguien</button>
+      <button class="boton" onclick="autoevaluacion();">Autoevaluación</button>
     </div>
   </div>
 
@@ -162,14 +161,17 @@
         imagen.style.opacity = '1';
       }, 32500); // 30s + 2.5s
     }
-    function irAutoEvaluacion()
+
+    function evaluar()
     {
-      window.location='autoevaluacion.html';
+      window.location.href = "evaluacion.html";
     }
-    function irEvaluacion()
+
+    function autoevaluacion()
     {
-      window.location='evaluacion.html';
+      window.location.href = "autoevaluacion.html";
     }
+
   </script>
 </body>
 </html>
