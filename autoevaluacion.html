@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Evaluación de Indicadores</title>
-  <!-- Font Awesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -95,11 +93,6 @@
     .show-summary-btn button:hover {
       background-color: #005f6b;
     }
-    .terminar
-    {
-      background-color: #ffc107;
-     
-    }
     @media (max-width: 600px) {
       .chart-container, .summary-chart {
         width: 100%;
@@ -121,10 +114,7 @@
     <canvas id="chart"></canvas>
   </div>-->
   <div class="show-summary-btn">
-    <button onclick="showSummary()"><i class="fas fa-chart-bar"></i> Ver Estadísticas</button>    
-  </div>
-  <div class="show-summary-btn">
-    <button onclick="terminar();"> <i class="fas fa-circle-xmark"></i> Terminar</button>    
+    <button onclick="showSummary()">Ver Estadísticas</button>
   </div>
   <div class="summary" id="summary" style="display:none">
     <h2>Resumen Final</h2>
@@ -243,31 +233,13 @@
       const summaryDetails = document.getElementById("summary-details");
       summaryDetails.innerHTML = '';
       let totalPuntos = 0;
-       //variables
-      let ptlg=0;
-      let ptep=0;
-      let ptnl=0;
       Object.keys(indicadores).forEach(cat => {
         const respuestas = data[cat] || {};
-        for (let ind of indicadores[cat]) 
-        {
+        for (let ind of indicadores[cat]) {
           const val = respuestas[ind];
-
-          if (val === "Logrado")
-          {
-            totalPuntos += 3;
-            ptlg+=3;
-          } 
-          else if (val === "En Proceso")
-          {
-            totalPuntos += 2;
-            ptep+=2;
-          } 
-          else if (val === "No Logrado")
-          {
-            totalPuntos += 1;
-            ptnl+=1;
-          } 
+          if (val === "Logrado") totalPuntos += 3;
+          else if (val === "En Proceso") totalPuntos += 2;
+          else if (val === "No Logrado") totalPuntos += 1;
         }
       });
       let resultadoTexto = "";
@@ -278,9 +250,6 @@
       summaryDetails.innerHTML = `
         <h3>Puntaje Total: ${totalPuntos}</h3>
         <p><strong>Resultado:</strong> ${resultadoTexto}</p>
-        <p><strong>Logrado:</strong> ${ptlg}</p>
-        <p><strong>En Proceso:</strong> ${ptep}</p>
-        <p><strong>No Logrado:</strong> ${ptnl}</p>
         <canvas id="resultadoChart" class="summary-chart"></canvas>
       `;
 
@@ -293,9 +262,9 @@
             datasets: [{
               label: 'Puntaje Total',
               data: [
-                totalPuntos >= 60 && totalPuntos <= 100 ? totalPuntos : ptnl,
-                totalPuntos >= 101 && totalPuntos <= 140 ? totalPuntos : ptep,
-                totalPuntos >= 141 ? totalPuntos : ptlg
+                totalPuntos >= 60 && totalPuntos <= 100 ? totalPuntos : 100,
+                totalPuntos >= 101 && totalPuntos <= 140 ? totalPuntos : 140,
+                totalPuntos >= 141 ? totalPuntos : 180
               ],
               backgroundColor: [
                 totalPuntos <= 100 ? '#f44336' : '#ccc',
@@ -325,11 +294,7 @@
       }, 100);
       summaryContainer.style.display = 'block';
     }
-    
-    function terminar()
-    {
-      window.location='inicio.html';
-    }
+
     renderPage();
   </script>
 </body>
